@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaxIdaho.Models;
 
 namespace TaxIdaho.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("[controller]")]
 	public class WeatherForecastController : ControllerBase
 	{
