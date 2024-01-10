@@ -1,8 +1,16 @@
+using Microsoft.AspNetCore.Http.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+
+//// Configure JSON serialization options
+//builder.Services.Configure<JsonOptions>(options =>
+//{
+//	options.SerializerOptions.PropertyNamingPolicy = null; // or CamelCase, depending on your preference
+//});
 
 var app = builder.Build();
 
