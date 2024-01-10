@@ -17,6 +17,9 @@ namespace TaxIdaho.Controllers
 		[HttpGet]
 		public IEnumerable<SchoolInfo> Get()
 		{
+
+			_logger.Log(LogLevel.Information, "SchoolInfoController: Get Called.");
+
 			return Enumerable.Range(1, 4).Select(i => new SchoolInfo
 			{
 				Id = i,

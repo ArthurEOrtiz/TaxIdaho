@@ -1,5 +1,8 @@
 ﻿namespace TaxIdaho.Models
 {
+	/// <summary>
+	/// Model for the tblSchoolInfo Table 
+	/// </summary>
 	public class SchoolInfo
 	{
 		public int Id { get; set; }
