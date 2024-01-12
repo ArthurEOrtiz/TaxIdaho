@@ -23,7 +23,6 @@ namespace TaxIdaho.Controllers
 
 			_logger.LogInformation( "SchoolInfoController: Get Called.");
 
-
 			try
 			{
 				return _schoolInfoService.GetAll();

@@ -1,6 +1,3 @@
-using Microsoft.Data.SqlClient;
-using System.Data;
-using System.Diagnostics;
 using TaxIdaho.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,10 +11,9 @@ string? connectionString = configuration.GetConnectionString("DefaultConnection"
 
 try
 {
-	builder.Services.AddTransient<SchoolInfoService>(sp =>
+	builder.Services.AddTransient<SchoolInfoService>(serviceProvider =>
 	{
-		var configuration = sp.GetRequiredService<IConfiguration>();
-
+		var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 		return new SchoolInfoService(connectionString);
 	});
 }
