@@ -1,26 +1,22 @@
+using Microsoft.Extensions.Options;
+using TaxIdaho.Configuration;
 using TaxIdaho.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllersWithViews();
 
-var configuration = builder.Configuration;
-string? connectionString = configuration.GetConnectionString("DefaultConnection");
+//Configure options using the options pattern 
+builder.Services.Configure<SqlServerOptions>(builder.Configuration.GetSection("ConnectionStrings"));
 
-try
+// Register SchoolInfoService with options
+builder.Services.AddTransient<SchoolInfoService>(serviceProvider => 
 {
-	builder.Services.AddTransient<SchoolInfoService>(serviceProvider =>
-	{
-		var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-		return new SchoolInfoService(connectionString);
-	});
-}
-catch (Exception ex)
-{
-	throw;
-}
+	SqlServerOptions options = serviceProvider.GetRequiredService<IOptions<SqlServerOptions>>().Value;
+	return new SchoolInfoService(options.DefaultConnection);
+});
+
 
 var app = builder.Build();
 
