@@ -14,7 +14,8 @@ builder.Services.Configure<SqlServerOptions>(builder.Configuration.GetSection("C
 builder.Services.AddTransient<SchoolInfoService>(serviceProvider => 
 {
 	SqlServerOptions options = serviceProvider.GetRequiredService<IOptions<SqlServerOptions>>().Value;
-	return new SchoolInfoService(options.DefaultConnection);
+	ILogger<SchoolInfoService> logger = serviceProvider.GetRequiredService<ILogger<SchoolInfoService>>();
+	return new SchoolInfoService(logger, options.DefaultConnection);
 });
 
 
