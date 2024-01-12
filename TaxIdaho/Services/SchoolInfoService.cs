@@ -16,6 +16,12 @@ namespace TaxIdaho.Services
 			_connectionString = connectionString;
 		}
 
+		/// <summary>
+		/// Retrieves all records of school information. 
+		/// </summary>
+		/// <returns>
+		/// An <see cref="IEnumerable{T}"/> collection of <see cref="SchoolInfo"/> objects
+		/// </returns>
 		public IEnumerable<SchoolInfo> GetAll()
 		{
 			using (IDbConnection dbConnection = new SqlConnection(_connectionString))
@@ -33,15 +39,13 @@ namespace TaxIdaho.Services
 		/// <param name="startDate">Start date of the range</param>
 		/// <param name="endDate">End date of the range</param>
 		/// <returns>
-		/// A collection of <see cref="SchoolInfo"/> objects objects representing school 
+		/// An <see cref="IEnumerable{T}"/> of <see cref="SchoolInfo"/> representing school 
 		/// information entries that fall within the specified date range.
 		/// </returns>
 		public IEnumerable<SchoolInfo> GetCoursesByDateRange(DateTime startDate, DateTime endDate)
 		{
 			using (IDbConnection dbConnection = new SqlConnection(_connectionString))
 			{
-				dbConnection.Open();
-
 				string script = @"
             SELECT [SSchoolType]
                 ,[SDateSchool]
@@ -56,16 +60,17 @@ namespace TaxIdaho.Services
 
 				try
 				{
+					dbConnection.Open();
 					return dbConnection.Query<SchoolInfo>(script, new { StartDate = startDate, EndDate = endDate }).ToList();
 				}
 				catch (SqlException ex) 
 				{
-					_logger.LogError($"SchoolInfoService, Sql Exception: {ex.Message}");
+					_logger.LogError(ex, "SchoolInfoService, GetCoursesByDateRange, SQL Exception: {script}", script);
 					return Enumerable.Empty<SchoolInfo>();
 				}
 				catch(Exception ex)
 				{
-					_logger.LogError($"SchoolInfo Service, Exception; {ex.Message}");
+					_logger.LogError(ex, "SchoolInfoService, GetCoursesByDateRange, Exception, Start Date: {startDate}, End Date: {endDate}", startDate, endDate);
 					return Enumerable.Empty<SchoolInfo>();
 				}
 				

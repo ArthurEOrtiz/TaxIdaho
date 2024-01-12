@@ -18,10 +18,10 @@ namespace TaxIdaho.Controllers
 		}
 
 		[HttpGet]
-		public IEnumerable<SchoolInfo> Get()
+		public IEnumerable<SchoolInfo> GetAll()
 		{
 
-			_logger.LogInformation( "SchoolInfoController: Get Called.");
+			_logger.LogInformation(0, "SchoolInfoController, Get() Called");
 
 			try
 			{
@@ -29,15 +29,25 @@ namespace TaxIdaho.Controllers
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.ToString());
-				if (ex.InnerException != null)
-				{
-					_logger.LogError(ex.InnerException.Message);
-				}
-
-				return Array.Empty<SchoolInfo>();
+				_logger.LogError(ex, "SchoolInfoController, Get, Exception");
+				return Enumerable.Empty<SchoolInfo>();
 			}
+		}
 
+		[HttpGet("GetByDateRange")]
+		public IEnumerable<SchoolInfo> GetByDateRang(DateTime startDate, DateTime endDate) 
+		{
+			_logger.LogInformation(0, "SchoolInfoController, GetByDateRange({StartDate}, {EndDate}), Called", startDate, endDate);
+
+			try
+			{
+				return _schoolInfoService.GetCoursesByDateRange(startDate, endDate);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "SchoolInfoController, GetByDateRange({StartDate}, {EndDate}) Exception", startDate, endDate);
+				return Enumerable.Empty<SchoolInfo>();
+			}
 		}
 
 	}

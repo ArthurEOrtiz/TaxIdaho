@@ -59,7 +59,8 @@ export class SchoolInfo extends Component {
 
 	async populateSchoolInfoDate() {
 		try {
-			const response = await fetch('schoolinfo');
+			const currentYear = new Date().getFullYear();
+			const response = await fetch(`schoolinfo/GetByDateRange?startDate=${currentYear}-01-01&endDate=${currentYear}-12-31`);
 
 			if (!response.ok) {
 				throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
