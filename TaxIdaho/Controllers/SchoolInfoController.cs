@@ -9,33 +9,34 @@ namespace TaxIdaho.Controllers
 	public class SchoolInfoController : ControllerBase
 	{
 		private readonly ILogger<SchoolInfoController> _logger;
+		private readonly SchoolInfoService _schoolInfoService;
 
-		public SchoolInfoController(ILogger<SchoolInfoController> logger)
+		public SchoolInfoController(ILogger<SchoolInfoController> logger, SchoolInfoService schoolInfoService)
 		{
 			_logger = logger;
+			_schoolInfoService = schoolInfoService;
 		}
 
 		[HttpGet]
 		public IEnumerable<SchoolInfo> Get()
 		{
 
-			_logger.Log(LogLevel.Information, "SchoolInfoController: Get Called.");
-		
-			var schoolInfoService = new SchoolInfoService(connectionString);
+			_logger.LogInformation( "SchoolInfoController: Get Called.");
+
 
 			try
 			{
-				return schoolInfoService.GetAll();
+				return _schoolInfoService.GetAll();
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
+				_logger.LogError(ex.ToString());
 				if (ex.InnerException != null)
 				{
-					Console.WriteLine(ex.InnerException.Message);
+					_logger.LogError(ex.InnerException.Message);
 				}
 
-				return Enumerable.Empty<SchoolInfo>();
+				return Array.Empty<SchoolInfo>();
 			}
 
 		}
