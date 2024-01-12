@@ -27,8 +27,8 @@ export class SchoolInfo extends Component {
 					</tr>
 				</thead>
 				<tbody>
-					{courses.map(course =>
-						<tr key={course.id}>
+					{courses.map((course, index) =>
+						<tr key={index}>
 							<td>{course.sSchoolType}</td>
 							<td>{course.sDateSchool}</td>
 							<td>{course.sSeq}</td>

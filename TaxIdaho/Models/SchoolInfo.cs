@@ -5,7 +5,6 @@
 	/// </summary>
 	public class SchoolInfo
 	{
-		public int Id { get; set; }
 		public string SSchoolType { get; set; } = String.Empty;
 		public DateTime SDateSchool { get; set; }
 		public int SSeq { get; set; }

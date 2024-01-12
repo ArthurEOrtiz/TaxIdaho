@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaxIdaho.Models;
+using TaxIdaho.Services;
 
 namespace TaxIdaho.Controllers
 {
@@ -19,19 +20,24 @@ namespace TaxIdaho.Controllers
 		{
 
 			_logger.Log(LogLevel.Information, "SchoolInfoController: Get Called.");
+		
+			var schoolInfoService = new SchoolInfoService(connectionString);
 
-			return Enumerable.Range(1, 4).Select(i => new SchoolInfo
+			try
 			{
-				Id = i,
-				SSchoolType = $"School Type: {i}",
-				SDateSchool = DateTime.Now.AddDays(i),
-				SSeq = i,
-				SCity = $"City {i}",
-				SLocation1 = $"Location 1 {i}",
-				SLocation2 = $"Location 2 {i}",
-				SDeadLine = DateTime.Now.AddDays(i)
-			})
-			.ToArray();
+				return schoolInfoService.GetAll();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				if (ex.InnerException != null)
+				{
+					Console.WriteLine(ex.InnerException.Message);
+				}
+
+				return Enumerable.Empty<SchoolInfo>();
+			}
+
 		}
 
 	}
