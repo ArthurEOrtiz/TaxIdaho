@@ -24,5 +24,15 @@ namespace TaxIdaho.Services
 				return dbConnection.Query<SchoolInfo>("SELECT tblSchoolInfo. * FROM tblSchoolInfo order by tblSchoolInfo.SDateSchool").ToList();
 			}
 		}
+
+		//public IEnumerable<SchoolInfo> GetCoursesByDateRange(DateTime startDate, DateTime endDate)
+		//{
+		//	using(IDbConnection dbConnection = new SqlConnection(_connectionString))
+		//	{
+		//		dbConnection.Open();
+
+		//		string script = 
+		//	}
+		//}
 	}
 }

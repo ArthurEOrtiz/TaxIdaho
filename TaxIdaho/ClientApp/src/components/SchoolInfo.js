@@ -57,11 +57,6 @@ export class SchoolInfo extends Component {
 		);
 	}
 
-	//async populateSchoolInfoDate() {
-	//	const response = await fetch('schoolinfo');
-	//	const data = await response.json();
-	//	this.setState({ courses: data, loading: false });
-	//}
 	async populateSchoolInfoDate() {
 		try {
 			const response = await fetch('schoolinfo');
