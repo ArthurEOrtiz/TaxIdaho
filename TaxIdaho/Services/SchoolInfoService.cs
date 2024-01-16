@@ -65,12 +65,12 @@ namespace TaxIdaho.Services
 				}
 				catch (SqlException ex) 
 				{
-					_logger.LogError(ex, "SchoolInfoService, GetCoursesByDateRange, SQL Exception: {script}", script);
+					_logger.LogError(ex, "GetCoursesByDateRange(), SQL Exception: {script}", script);
 					return Enumerable.Empty<SchoolInfo>();
 				}
 				catch(Exception ex)
 				{
-					_logger.LogError(ex, "SchoolInfoService, GetCoursesByDateRange, Exception, Start Date: {startDate}, End Date: {endDate}", startDate, endDate);
+					_logger.LogError(ex, "GetCoursesByDateRange(), Exception, Start Date: {startDate}, End Date: {endDate}", startDate, endDate);
 					return Enumerable.Empty<SchoolInfo>();
 				}
 				

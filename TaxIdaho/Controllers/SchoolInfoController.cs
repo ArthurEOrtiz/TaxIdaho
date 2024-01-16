@@ -21,7 +21,7 @@ namespace TaxIdaho.Controllers
 		public IEnumerable<SchoolInfo> GetAll()
 		{
 
-			_logger.LogInformation(0, "SchoolInfoController, Get() Called");
+			_logger.LogInformation(0, "GetAll(), Called");
 
 			try
 			{
@@ -29,7 +29,7 @@ namespace TaxIdaho.Controllers
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "SchoolInfoController, Get, Exception");
+				_logger.LogError(ex, "GetAll(), Exception");
 				return Enumerable.Empty<SchoolInfo>();
 			}
 		}
@@ -37,7 +37,7 @@ namespace TaxIdaho.Controllers
 		[HttpGet("GetByDateRange")]
 		public IEnumerable<SchoolInfo> GetByDateRang(DateTime startDate, DateTime endDate) 
 		{
-			_logger.LogInformation(0, "SchoolInfoController, GetByDateRange({StartDate}, {EndDate}), Called", startDate, endDate);
+			_logger.LogInformation(0, "GetByDateRange({StartDate}, {EndDate}), Called", startDate, endDate);
 
 			try
 			{
@@ -45,7 +45,7 @@ namespace TaxIdaho.Controllers
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "SchoolInfoController, GetByDateRange({StartDate}, {EndDate}) Exception", startDate, endDate);
+				_logger.LogError(ex, "GetByDateRange({StartDate}, {EndDate}), Exception", startDate, endDate);
 				return Enumerable.Empty<SchoolInfo>();
 			}
 		}
