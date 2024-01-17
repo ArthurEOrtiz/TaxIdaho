@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useErrorBoundary } from "react-error-boundary";
+import { Link } from "react-router-dom";
 import './SchoolInfo.css'
 
 export const SchoolInfo = () => {
@@ -8,7 +9,7 @@ export const SchoolInfo = () => {
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  
+
   // This is how the example was at `https://github.com/bvaughn/react-error-boundary`
   //useEffect(() => {
   //  const currentYear = new Date().getFullYear();
@@ -31,11 +32,11 @@ export const SchoolInfo = () => {
     if (startDate && endDate) {
       fetchData();
     }
-  // Below is not a dev note, I'm telling es-lint to ignore the next line. 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Below is not a dev note, I'm telling es-lint to ignore the next line. 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]); // Empty dependency array to run the effect only once on mount
-                            // but when it has something in there, it will run when the 
-                            // value of the dependency changes.
+  // but when it has something in there, it will run when the 
+  // value of the dependency changes.
 
   const fetchData = async () => {
     try {
@@ -46,7 +47,7 @@ export const SchoolInfo = () => {
       }
 
       const data = await response.json();
-      //console.log('Received data:', data);
+      console.log('Received data:', data);
       setCourses(data);
       setLoading(false);
 
@@ -60,9 +61,9 @@ export const SchoolInfo = () => {
     const selectedStartDate = event.target.value;
     // The user can only set the startDate to something before the endDate
     // or to anything if the endDate is not set. 
-    if (!endDate || new Date(endDate) < new Date(selectedStartDate)) {
+    if (!endDate || new Date(endDate) > new Date(selectedStartDate)) {
       setStartDate(selectedStartDate);
-    } 
+    }
   };
 
   const handleEndDateChange = (event) => {
@@ -71,13 +72,39 @@ export const SchoolInfo = () => {
     // or when the start date isn't set yet. 
     if (!startDate || new Date(selectedEndDate) >= new Date(startDate)) {
       setEndDate(selectedEndDate);
-    } 
+    }
   };
 
-  // Helper function to format date
+  // Helper function to format dates
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const formatDateYYYYMMDD = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-based
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper function to turn table data into clickable link, and add styling 
+  const TableData = ({ td, course }) => {
+
+    return (
+      <td>
+        <Link
+          to={`/course-description?SSchholType=${course.sSchoolType}&SSDateSchool=${formatDateYYYYMMDD(course.sDateSchool)}&SSeq=${course.sSeq}`}
+          className="link-dark"  
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          title="Click to see course details">
+          {td}
+        </Link>
+      </td>
+    );
   };
 
   const renderCoursesTable = (courses) => (
@@ -86,7 +113,7 @@ export const SchoolInfo = () => {
         <tr>
           <th>Date</th>
           <th>Description</th>
-          <th>Locations</th>
+          <th>Location</th>
           <th>Address</th>
           <th>Enrollment Dead Line</th>
         </tr>
@@ -94,11 +121,11 @@ export const SchoolInfo = () => {
       <tbody>
         {courses.map((course, index) => (
           <tr key={index}>
-            <td>{formatDate(course.sDateSchool)}</td>
-            <td>{course.sCity}</td>
-            <td>{course.sLocation1}</td>
-            <td>{course.sLocation2}</td>
-            <td>{formatDate(course.sDeadLine)}</td>
+            <TableData td={formatDate(course.sDateSchool)} course={course} />
+            <TableData td={course.sCity} course={course} />
+            <TableData td={course.sLocation1} course={course} />
+            <TableData td={course.sLocation2} course={course} />
+            <TableData td={formatDate(course.sDeadLine)} course={course} />
           </tr>
         ))}
       </tbody>
