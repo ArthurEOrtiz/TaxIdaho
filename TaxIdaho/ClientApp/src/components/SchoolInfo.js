@@ -1,5 +1,4 @@
-﻿"use client";
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useErrorBoundary } from "react-error-boundary";
 
 export const SchoolInfo = () => {
