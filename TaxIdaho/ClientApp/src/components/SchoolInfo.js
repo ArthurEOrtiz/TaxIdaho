@@ -6,7 +6,8 @@ export const SchoolInfo = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  
   // This is how the example was at `https://github.com/bvaughn/react-error-boundary`
   //useEffect(() => {
   //  const currentYear = new Date().getFullYear();
@@ -25,14 +26,19 @@ export const SchoolInfo = () => {
   //});
 
   useEffect(() => {
-    fetchData();
-  // Below is not a dev note, but rather I'm telling es-lint to ignore the next line. 
+    // only fetchData when there is a start date and end date.
+    if (startDate && endDate) {
+      fetchData();
+    }
+  // Below is not a dev note, I'm telling es-lint to ignore the next line. 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]); // Empty dependency array to run the effect only once on mount
+                            // but when it has something in there, it will run when the 
+                            // value of the dependency changes.
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`schoolinfo/GetByDateRange?startDate=${startDate}1&endDate=${endDate}`);
+      const response = await fetch(`schoolinfo/GetByDateRange?startDate=${startDate}&endDate=${endDate}`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
@@ -50,47 +56,72 @@ export const SchoolInfo = () => {
     }
   };
 
+  const handleStartDateChange = (event) => {
+    const selectedStartDate = event.target.value;
+    // The user can only set the startDate to something before the endDate
+    // or to anything if the endDate is not set. 
+    if (!endDate || new Date(endDate) < new Date(selectedStartDate)) {
+      setStartDate(selectedStartDate);
+    } else {
+      console.log(`Start Date must be before the End Date`);
+    }
+  };
+
+  const handleEndDateChange = (event) => {
+    const selectedEndDate = event.target.value;
+    // The user can only set the endDate to to something less than the start date
+    // or when the start date isn't set yet. 
+    if (!startDate || new Date(selectedEndDate) >= new Date(startDate)) {
+      setEndDate(selectedEndDate);
+    } else {
+      console.log(`End Date must be after Start Date`);
+    }
+  };
+
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   const renderCoursesTable = (courses) => (
     <table className='table table-striped' aria-labelledby="tabelLabel">
       <thead>
         <tr>
-          <th>School Type</th>
           <th>Date</th>
-          <th>Seq</th>
-          <th>City</th>
-          <th>Location 1</th>
-          <th>Location 2</th>
-          <th>Dead Line</th>
+          <th>Description</th>
+          <th>Locations</th>
+          <th>Address</th>
+          <th>Enrollment Dead Line</th>
         </tr>
       </thead>
       <tbody>
         {courses.map((course, index) => (
           <tr key={index}>
-            <td>{course.sSchoolType}</td>
-            <td>{course.sDateSchool}</td>
-            <td>{course.sSeq}</td>
+            <td>{formatDate(course.sDateSchool)}</td>
             <td>{course.sCity}</td>
             <td>{course.sLocation1}</td>
             <td>{course.sLocation2}</td>
-            <td>{course.sDeadLine}</td>
+            <td>{formatDate(course.sDeadLine)}</td>
           </tr>
         ))}
       </tbody>
     </table>
   );
 
-  const contents = loading ? <p><em>Loading...</em></p>: renderCoursesTable(courses);
+  const contents = startDate && endDate ? (loading ? <p><em>Loading...</em></p> : renderCoursesTable(courses)) : null;
 
   return (
     <div>
-      <h1 id="tabelLabel"> School Info </h1>
-      <p>Trying to display some data of a page</p>
+      <h1 id="tabelLabel">Property Tax Education Information</h1>
+      <h2>Scheduled Classes</h2>
+      <p> Select a start date and an end date to search for scheduled classes within that date range.</p>
       <div>
         <label htmlFor="startDate">Start Date:</label>
-        <input type="date" id="startDate" value={startDate} onChange={handleStartDateChange} />
+        <input type="date" id="startDate" value={startDate} max={endDate} onChange={handleStartDateChange} />
 
         <label htmlFor="endDate">End Date:</label>
-        <input type="date" id="endDate" value={endDate} onChange={handleEndDateChange} />
+        <input type="date" id="endDate" value={endDate} min={startDate} onChange={handleEndDateChange} />
       </div>
       {contents}
     </div>

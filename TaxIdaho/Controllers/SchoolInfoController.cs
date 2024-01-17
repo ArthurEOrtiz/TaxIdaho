@@ -49,14 +49,13 @@ namespace TaxIdaho.Controllers
 			_logger.LogInformation(0, "GetByDateRange({StartDate}, {EndDate}), Called", startDate, endDate);
 
 			try
-			{
-				IEnumerable<SchoolInfo> data = _schoolInfoService.GetCoursesByDateRange(startDate, endDate);
-				return (IEnumerable<SchoolInfo>)Ok(data);
+			{				
+				return _schoolInfoService.GetCoursesByDateRange(startDate, endDate);
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "GetByDateRange({StartDate}, {EndDate})", startDate, endDate);
-				return (IEnumerable<SchoolInfo>)StatusCode(500, Enumerable.Empty<SchoolInfo>());
+				return  Enumerable.Empty<SchoolInfo>();
 			}
 		}
 
