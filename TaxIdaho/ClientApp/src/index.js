@@ -14,7 +14,7 @@ const root = createRoot(rootElement);
 
 root.render(
   <BrowserRouter basename={baseUrl}>
-    <ErrorBoundary fallback={<div>Something went wrong.</div> }>
+    <ErrorBoundary fallback={<div>Something went wrong at the top level.</div> }>
       <App />
     </ErrorBoundary>
   </BrowserRouter>);
