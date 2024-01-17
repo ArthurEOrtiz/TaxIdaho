@@ -34,6 +34,15 @@ namespace TaxIdaho.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Retrieves a collection of school information entries within the specified date range.
+		/// </summary>
+		/// <param name="startDate">A start <see cref="DateTime"/> of the range </param>
+		/// <param name="endDate">A end <see cref="DateTime"/>of the rang</param>
+		/// <returns>
+		/// An <see cref="IEnumerable{T}"/> of <see cref="SchoolInfo"/> representing school 
+		/// information entries that fall within the specified date range.
+		/// </returns>
 		[HttpGet("GetByDateRange")]
 		public IEnumerable<SchoolInfo> GetByDateRang(DateTime startDate, DateTime endDate) 
 		{
@@ -41,12 +50,13 @@ namespace TaxIdaho.Controllers
 
 			try
 			{
-				return _schoolInfoService.GetCoursesByDateRange(startDate, endDate);
+				IEnumerable<SchoolInfo> data = _schoolInfoService.GetCoursesByDateRange(startDate, endDate);
+				return (IEnumerable<SchoolInfo>)Ok(data);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "GetByDateRange({StartDate}, {EndDate}), Exception", startDate, endDate);
-				return Enumerable.Empty<SchoolInfo>();
+				_logger.LogError(ex, "GetByDateRange({StartDate}, {EndDate})", startDate, endDate);
+				return (IEnumerable<SchoolInfo>)StatusCode(500, Enumerable.Empty<SchoolInfo>());
 			}
 		}
 
