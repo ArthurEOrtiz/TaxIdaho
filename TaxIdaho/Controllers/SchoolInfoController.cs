@@ -44,7 +44,7 @@ namespace TaxIdaho.Controllers
 		/// information entries that fall within the specified date range.
 		/// </returns>
 		[HttpGet("GetByDateRange")]
-		public IEnumerable<SchoolInfo> GetByDateRang(DateTime startDate, DateTime endDate) 
+		public IEnumerable<SchoolInfo> GetByDateRange(DateTime startDate, DateTime endDate) 
 		{
 			_logger.LogInformation(0, "GetByDateRange({StartDate}, {EndDate}), Called", startDate, endDate);
 

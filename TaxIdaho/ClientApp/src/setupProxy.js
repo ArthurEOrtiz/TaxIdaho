@@ -7,7 +7,8 @@ const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_H
   // The context array specifies the paths that will be proxied to the specified target URL (your C# API backend).
 const context =  [
   "/weatherforecast",
-  "/schoolinfo"
+  "/schoolinfo",
+  "/schoolcourse"
 ];
 
 module.exports = function(app) {

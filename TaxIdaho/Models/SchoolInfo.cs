@@ -4,6 +4,7 @@
 	/// Model for the tblSchoolInfo Table
 	/// Who ever created the database did a pretty bad job.
 	/// For starters they neglected to have a unique Id for the courses.
+	/// Instead its a blended key of SSchoolType, SDateSchool, and SSeq.
 	/// SCity is actually the descriptive name for the course.
 	/// SLocation1 is a descriptive name of the location, usually the name of a building.
 	/// SLocation2 is usually the actual address of the of the course. 
