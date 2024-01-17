@@ -7,27 +7,7 @@ export const SchoolInfo = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  //useEffect(() => {
-  //  const currentYear = new Date().getFullYear();
-  //  fetch(`schoolinfo/GetByDateRange?startDate=${currentYear}-01-01&endDate=${currentYear}-12-31`)
-  //    .then(response => {
-  //      if (!response.ok) {
-  //        throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
-  //      }
-  //      return response.json();
-  //    })
-  //    .then((data) => {
-  //      console.log('Received data:', data); // Log the received data for debugging purposes
-  //      setCourses(data);
-  //      setLoading(false);
-  //    })
-  //    .catch((error) => {
-  //      console.error('Error:', error);
-  //      // Handle the error, update state, or show a user-friendly error message as needed
-  //    });
-  //}, []);
-
-
+  // This is how the example was at `https://github.com/bvaughn/react-error-boundary`
   //useEffect(() => {
   //  const currentYear = new Date().getFullYear();
   //  fetch(`schoolinfo/GetByDateRange?startDate=${currentYear}-01-01&endDate=${currentYear}-12-31`).then(
