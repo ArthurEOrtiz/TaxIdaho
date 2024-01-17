@@ -1,0 +1,41 @@
+﻿/* FallBack.css */
+.fallBackContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	text-align: center;
+}
+
+.fallBackHeading {
+	font-size: 2rem;
+	margin-bottom: 1rem;
+}
+
+.errorContainer {
+	background-color: #FFEBE5;
+	padding: 1rem;
+	border-radius: 8px;
+	margin: 1rem;
+}
+
+.errorMessage {
+	font-weight: bold;
+}
+
+.errorPre {
+	color: #FF0000;
+	white-space: pre-wrap;
+}
+
+.retryButton {
+	background-color: #4CAF50;
+	color: white;
+	padding: 10px 20px;
+	font-size: 1rem;
+	border-radius: 4px;
+	cursor: pointer;
+	border: none;
+	margin-top: 1rem;
+}
