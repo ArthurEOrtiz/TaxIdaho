@@ -5,7 +5,8 @@ export const SchoolInfo = () => {
   const { showBoundary } = useErrorBoundary();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndate] = useState('');
   // This is how the example was at `https://github.com/bvaughn/react-error-boundary`
   //useEffect(() => {
   //  const currentYear = new Date().getFullYear();
@@ -24,30 +25,30 @@ export const SchoolInfo = () => {
   //});
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const currentYear = new Date().getFullYear();
-        const response = await fetch(`schoolinfo/GetByDateRange?startDate=${currentYear}-01-01&endDate=${currentYear}-12-31`);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log('Received data:', data);
-        setCourses(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error:', error);
-        showBoundary(error);
-      }
-    };
-
     fetchData();
   // Below is not a dev note, but rather I'm telling es-lint to ignore the next line. 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array to run the effect only once on mount
+  }, [startDate, endDate]); // Empty dependency array to run the effect only once on mount
 
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`schoolinfo/GetByDateRange?startDate=${startDate}1&endDate=${endDate}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Received data:', data);
+      setCourses(data);
+      setLoading(false);
+
+    } catch (error) {
+
+      console.error('Error:', error);
+      showBoundary(error);
+    }
+  };
 
   const renderCoursesTable = (courses) => (
     <table className='table table-striped' aria-labelledby="tabelLabel">
@@ -84,6 +85,13 @@ export const SchoolInfo = () => {
     <div>
       <h1 id="tabelLabel"> School Info </h1>
       <p>Trying to display some data of a page</p>
+      <div>
+        <label htmlFor="startDate">Start Date:</label>
+        <input type="date" id="startDate" value={startDate} onChange={handleStartDateChange} />
+
+        <label htmlFor="endDate">End Date:</label>
+        <input type="date" id="endDate" value={endDate} onChange={handleEndDateChange} />
+      </div>
       {contents}
     </div>
   );
