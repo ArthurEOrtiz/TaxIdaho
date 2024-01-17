@@ -2,8 +2,6 @@
 import './FallBack.css';
 
 export const FallBack = ({ error, resetErrorBoundary }) => {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
-
   return (
     <div className="fallBackContainer">
       <h2 className="fallBackHeading">Oops! Something went wrong</h2>
