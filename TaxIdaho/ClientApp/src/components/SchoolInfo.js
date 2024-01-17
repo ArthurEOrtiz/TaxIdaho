@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useErrorBoundary } from "react-error-boundary";
+import './SchoolInfo.css'
 
 export const SchoolInfo = () => {
   const { showBoundary } = useErrorBoundary();
@@ -45,13 +46,12 @@ export const SchoolInfo = () => {
       }
 
       const data = await response.json();
-      console.log('Received data:', data);
+      //console.log('Received data:', data);
       setCourses(data);
       setLoading(false);
 
     } catch (error) {
-
-      console.error('Error:', error);
+      //console.error('Error:', error);
       showBoundary(error);
     }
   };
@@ -62,9 +62,7 @@ export const SchoolInfo = () => {
     // or to anything if the endDate is not set. 
     if (!endDate || new Date(endDate) < new Date(selectedStartDate)) {
       setStartDate(selectedStartDate);
-    } else {
-      console.log(`Start Date must be before the End Date`);
-    }
+    } 
   };
 
   const handleEndDateChange = (event) => {
@@ -73,9 +71,7 @@ export const SchoolInfo = () => {
     // or when the start date isn't set yet. 
     if (!startDate || new Date(selectedEndDate) >= new Date(startDate)) {
       setEndDate(selectedEndDate);
-    } else {
-      console.log(`End Date must be after Start Date`);
-    }
+    } 
   };
 
   // Helper function to format date
@@ -113,10 +109,10 @@ export const SchoolInfo = () => {
 
   return (
     <div>
-      <h1 id="tabelLabel">Property Tax Education Information</h1>
+      <h1 id="tableLabel">Property Tax Education Information</h1>
       <h2>Scheduled Classes</h2>
       <p> Select a start date and an end date to search for scheduled classes within that date range.</p>
-      <div>
+      <div className="date-inputs">
         <label htmlFor="startDate">Start Date:</label>
         <input type="date" id="startDate" value={startDate} max={endDate} onChange={handleStartDateChange} />
 

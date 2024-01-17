@@ -1,0 +1,11 @@
+﻿
+.date-inputs {
+	display: flex;
+	gap: 10px;
+}
+
+
+.loading {
+	font-style: italic;
+	color: #555;
+}
