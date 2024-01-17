@@ -4,25 +4,29 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 export const CourseDescription = () => {
   const { showBoundary } = useErrorBoundary();
-  //const [course, setCourse] = useState([]);
-	//const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [course, setCourse] = useState([]);
+	const [loading, setLoading] = useState(true);
+  //const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     try {
-      validateAndLogCourseDetails(location.search);
+      const { schoolType, dateSchool, seq } = validateAndLogCourseDetails(location.search);
+      if (schoolType && dateSchool && seq) {
+        fetchData(schoolType, dateSchool, seq);
+      }
     } catch (error) {
       showBoundary(error);
     }
-  }, [location.search, navigate]);
+  }, []);
 
   const validateAndLogCourseDetails = (search) => {
     const { schoolType, dateSchool, seq } = extractVariablesFromURL(search);
     const validationErrors = validateCourseDetails(schoolType, dateSchool, seq);
 
     if (validationErrors.length >= 1) {
-      logCourseDetails(schoolType, dateSchool, seq);
+      //logCourseDetails(schoolType, dateSchool, seq);
+      return { schoolType, dateSchool, seq };
     } else {
       throw new Error(validationErrors.join(' '));
     }
@@ -65,11 +69,31 @@ export const CourseDescription = () => {
     return regex.test(dateString);
   };
 
-  return (
+  const fetchData = async (schoolType, dateSchool, seq) => {
+    logCourseDetails(schoolType, dateSchool, seq);
+    try {
+      const response = await fetch(`schoolcourse/GetByBlendedKey?schoolType=${schoolType}&dateSchool=${dateSchool}&cSSeq=${seq}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch course record: ${response.status} ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Selected Course: ', data);
+      setCourse(data)
+      setLoading(false);
+    } catch (error) {
+      showBoundary(error);
+    }
+  }
+
+  const renderPage = (course) => (
     <div>
-      <h1>Course Name</h1>
+      <h1>{course.cName}</h1>
     </div>
   );
+
+  const contents = loading ? <p><em>Loading Course . . . </em></p> : renderPage(course);
+
+  return contents;
 };
 
 
