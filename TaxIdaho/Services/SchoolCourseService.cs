@@ -45,5 +45,40 @@ namespace TaxIdaho.Services
 				return dbConnection.Query<SchoolCourse>(script, new { SchoolType = schoolType, DateSchool = dateSchool, CSSeq = cSSeq }).Single();
 			}
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="schoolType"></param>
+		/// <param name="dateSchool"></param>
+		/// <param name="cSSeq"></param>
+		/// <returns></returns>
+		public SchoolCourse GetByBlendedKeyExtended(string schoolType, DateTime dateSchool, int cSSeq)
+		{
+			using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+			{
+				dbConnection.Open();
+				string script = @"
+					SELECT
+							ds.*,
+							st.SLocation1,
+							st.SLocation2,
+							st.SDeadline
+					FROM
+							tblSchoolInfo st
+					RIGHT OUTER JOIN
+							tblSchoolCourses ds ON ds.cDateSchool = st.SDateSchool
+											AND ds.cSchoolType = st.SSchoolType
+											AND ds.cSSeq = st.SSeq
+					WHERE
+							st.SSchoolType = @SchoolType
+							AND st.SDateSchool = @DateSchool
+							AND st.SSeq = @CSSeq;
+				";
+
+				return dbConnection.Query<SchoolCourse>(script, new { SchoolType = schoolType, DateSchool = dateSchool, CSSeq = cSSeq }).Single();
+			}
+		}
+		// START HERE tomorrow figure out if this works.
 	}
 }

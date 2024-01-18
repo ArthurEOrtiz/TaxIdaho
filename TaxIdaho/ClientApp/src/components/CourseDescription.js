@@ -1,12 +1,11 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useErrorBoundary } from 'react-error-boundary';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export const CourseDescription = () => {
   const { showBoundary } = useErrorBoundary();
   const [course, setCourse] = useState([]);
 	const [loading, setLoading] = useState(true);
-  //const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -24,11 +23,11 @@ export const CourseDescription = () => {
     const { schoolType, dateSchool, seq } = extractVariablesFromURL(search);
     const validationErrors = validateCourseDetails(schoolType, dateSchool, seq);
 
-    if (validationErrors.length >= 1) {
-      //logCourseDetails(schoolType, dateSchool, seq);
-      return { schoolType, dateSchool, seq };
+    if (validationErrors.length > 1) {
+      throw new Error(`${validationErrors.join(' ')}\nLink values:\nSchoolType: ${schoolType}\n DateSchool: ${dateSchool}\nSeq: ${seq}`);
+      return null;
     } else {
-      throw new Error(validationErrors.join(' '));
+      return { schoolType, dateSchool, seq };
     }
   };
 
@@ -49,7 +48,6 @@ export const CourseDescription = () => {
     }
 
     if (!(dateSchool && isValidDate(dateSchool))) {
-      validationErrors.push(dateSchool);
       validationErrors.push("Date school should be a valid date in the format 'YYYY-MM-DD'.");
     }
 
@@ -60,17 +58,12 @@ export const CourseDescription = () => {
     return validationErrors;
   };
 
-  const logCourseDetails = (schoolType, dateSchool, seq) => {
-    console.log(`School Type: ${schoolType}\n SchoolDate: ${dateSchool}\n Seq: ${seq}`);
-  };
-
   const isValidDate = (dateString) => {
     const regex = /^\d{4}-\d{2}-\d{2}$/;
     return regex.test(dateString);
   };
 
   const fetchData = async (schoolType, dateSchool, seq) => {
-    logCourseDetails(schoolType, dateSchool, seq);
     try {
       const response = await fetch(`schoolcourse/GetByBlendedKey?schoolType=${schoolType}&dateSchool=${dateSchool}&cSSeq=${seq}`);
       if (!response.ok) {
@@ -85,9 +78,44 @@ export const CourseDescription = () => {
     }
   }
 
+  // Helper function to format dates
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   const renderPage = (course) => (
-    <div>
-      <h1>{course.cName}</h1>
+    <div className="container mt-4">
+      <h1 className="mb-4">{course.cName}</h1>
+
+      <div className="row">
+        <div className="col-md-6">
+          <h2>Description</h2>
+          <h4>Start Date</h4>
+          <p>{formatDate(course.cDateSchool)}</p>
+          <h4>Enrollment Deadline</h4>
+          <p>01/25/2035</p>
+          <h4>Class Time</h4>
+          <p>{course.cTime}</p>
+          <h4>About This Course</h4>
+          <p>{course.cDesc}</p>
+          <h4>Attendance Credit</h4>
+          <p>{course.cAttendCredit}</p>
+          <h4>Completion Credit</h4>
+          <p>{course.cFullCredit}</p>
+        </div>
+
+        <div className="col-md-6">
+          <h2>Location</h2>
+          <h4>Address</h4>
+          <p>1234 Fake Street</p>
+          <p>Boise, ID, 80088</p>
+          <h4>Building</h4>
+          <p>Holiday Inn</p>
+          <h4>Room Number</h4>
+          <p>{course.cRoom}</p>
+        </div>
+      </div>
     </div>
   );
 

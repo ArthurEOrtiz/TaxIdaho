@@ -13,7 +13,7 @@
 		public string CName { get; set; } = string.Empty;
 		public string CRoom { get; set; } = string.Empty;
 		public string CDesc { get; set; } = string.Empty;
-		public string CLink { get; set; } = string.Empty;
+		public string CLink { get; set; } = string.Empty; // this is a link to a pdf about the course
 		public string CTime { get; set; } = string.Empty;
 		public string CWkDay1 { get; set; } = string.Empty;
 		public string CWkDay2 { get; set; } = string.Empty;
@@ -29,5 +29,10 @@
 		public string CCertType { get; set; } = string.Empty;
 		public int CMaxStudents { get; set; }
 		public string CPreReq { get; set; } = string.Empty;
+		// Adding some rows from SchoolInfo, because these data tables are awful
+		public string Location1 { get; set; } = string.Empty;
+		public string Location2 { get; set; } = string.Empty;
+		public DateTime SDeadLine { get; set; }	
+
 	}
 }
