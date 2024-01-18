@@ -18,6 +18,14 @@ builder.Services.AddTransient<SchoolInfoService>(serviceProvider =>
 	return new SchoolInfoService(logger, options.DefaultConnection);
 });
 
+// Register SchoolCourseService with options.
+builder.Services.AddTransient<SchoolCourseService>(serviceProvider =>
+{
+	SqlServerOptions options = serviceProvider.GetRequiredService<IOptions<SqlServerOptions>>().Value;
+	ILogger<SchoolCourseService> logger = serviceProvider.GetRequiredService<ILogger<SchoolCourseService>>();
+	return new SchoolCourseService(logger, options.DefaultConnection);
+});
+
 
 var app = builder.Build();
 

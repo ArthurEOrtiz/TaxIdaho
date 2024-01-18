@@ -20,7 +20,7 @@ namespace TaxIdaho.Services
 		/// Retrieves all records of school information. 
 		/// </summary>
 		/// <returns>
-		/// An <see cref="IEnumerable{T}"/> collection of <see cref="SchoolInfo"/> objects
+		/// An <see cref="IEnumerable{T}"/> collection of <see cref="SchoolInfo"/> 
 		/// </returns>
 		public IEnumerable<SchoolInfo> GetAll()
 		{

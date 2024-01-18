@@ -3,6 +3,7 @@ import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
 import { SchoolInfo } from "./components/SchoolInfo";
 import { Calendar } from "./components/Calendar";
+import { CourseDescription } from "./components/CourseDescription";
 
 const AppRoutes = [
   {
@@ -24,6 +25,10 @@ const AppRoutes = [
   {
     path: '/calendar',
     element: <Calendar />
+  },
+  {
+    path: '/course-description',
+    element: <CourseDescription />
   }
 ];
 
