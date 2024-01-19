@@ -53,7 +53,7 @@ namespace TaxIdaho.Services
 		/// <param name="dateSchool"></param>
 		/// <param name="cSSeq"></param>
 		/// <returns></returns>
-		public SchoolCourse GetByBlendedKeyExtended(string schoolType, DateTime dateSchool, int cSSeq)
+		public SchoolCourse GetByBlendedKeyExtendedColumns(string schoolType, DateTime dateSchool, int sSeq)
 		{
 			using (IDbConnection dbConnection = new SqlConnection(_connectionString))
 			{
@@ -73,12 +73,11 @@ namespace TaxIdaho.Services
 					WHERE
 							st.SSchoolType = @SchoolType
 							AND st.SDateSchool = @DateSchool
-							AND st.SSeq = @CSSeq;
+							AND st.SSeq = @SSeq;
 				";
 
-				return dbConnection.Query<SchoolCourse>(script, new { SchoolType = schoolType, DateSchool = dateSchool, CSSeq = cSSeq }).Single();
+				return dbConnection.Query<SchoolCourse>(script, new { SchoolType = schoolType, DateSchool = dateSchool, SSeq = sSeq }).Single();
 			}
 		}
-		// START HERE tomorrow figure out if this works.
 	}
 }

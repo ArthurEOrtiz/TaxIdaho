@@ -5,9 +5,11 @@ import { useLocation } from 'react-router-dom';
 export const CourseDescription = () => {
   const { showBoundary } = useErrorBoundary();
   const [course, setCourse] = useState([]);
-	const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [weekDayObject, setWeekDayObject] = useState({});
   const location = useLocation();
 
+  // Fetch the Course Data
   useEffect(() => {
     try {
       const { schoolType, dateSchool, seq } = validateAndLogCourseDetails(location.search);
@@ -18,6 +20,19 @@ export const CourseDescription = () => {
       showBoundary(error);
     }
   }, []);
+
+  // Set the Week Day Object after the course is set. 
+  useEffect(() => {
+    setWeekDayObject({
+      Sunday: course.cWkDay1,
+      Monday: course.cWkDay2,
+      Tuesday: course.cWkDay3,
+      Wednesday: course.cWkDay4,
+      Thursday: course.cWkDay5,
+      Friday: course.cWkDay6,
+      Saturday: course.cWkDay7
+    });
+  }, [course]);
 
   const validateAndLogCourseDetails = (search) => {
     const { schoolType, dateSchool, seq } = extractVariablesFromURL(search);
@@ -65,9 +80,9 @@ export const CourseDescription = () => {
 
   const fetchData = async (schoolType, dateSchool, seq) => {
     try {
-      const response = await fetch(`schoolcourse/GetByBlendedKey?schoolType=${schoolType}&dateSchool=${dateSchool}&cSSeq=${seq}`);
+      const response = await fetch(`schoolcourse/GetByBlendedKeyExtendedColumns?schoolType=${schoolType}&dateSchool=${dateSchool}&sSeq=${seq}`);
       if (!response.ok) {
-        throw new Error(`Failed to fetch course record: ${response.status} ${response.status}`);
+        throw new Error(`Failed to fetch course record: ${response.status} ${response.message}`);
       }
       const data = await response.json();
       console.log('Selected Course: ', data);
@@ -84,36 +99,102 @@ export const CourseDescription = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const renderWorkDayText = (cWkDay) => {
+    const workDay = (cWkDay ?? "").toLowerCase();
+
+    switch (workDay) {
+      case "a":
+        return <p>Morning class.</p>;
+      case "p":
+        return <p>Evening class.</p>;
+      case "f":
+        return <p>Full day of class.</p>;
+      case "":
+        return <p>No class.</p>;
+      default:
+        throw new Error(`${cWkDay} cannot be converted to a valid type. ("a", "p", "f", empty string)`);
+    }
+  };
+
+  const renderWorkDayCard = (dayOfTheWeek) => {
+    const formattedDay = dayOfTheWeek.charAt(0).toUpperCase() + dayOfTheWeek.slice(1).toLowerCase();
+    return (
+      <div className="card ratio ratio-1x1">
+        <div className="card-body">
+          <h6 className="card-title text-center">{formattedDay}</h6>
+          {renderWorkDayText(weekDayObject[formattedDay])}
+        </div>
+      </div>
+    );
+  }
+
   const renderPage = (course) => (
-    <div className="container mt-4">
+    <div className="container">
       <h1 className="mb-4">{course.cName}</h1>
 
       <div className="row">
-        <div className="col-md-6">
-          <h2>Description</h2>
-          <h4>Start Date</h4>
+        <div className="col-md-4">
+          <h5>Start Date</h5>
           <p>{formatDate(course.cDateSchool)}</p>
-          <h4>Enrollment Deadline</h4>
-          <p>01/25/2035</p>
-          <h4>Class Time</h4>
+          <h5>Enrollment Deadline</h5>
+          <p>{formatDate(course.sDeadLine)}</p>
+          <h5>Class Time</h5>
           <p>{course.cTime}</p>
-          <h4>About This Course</h4>
-          <p>{course.cDesc}</p>
-          <h4>Attendance Credit</h4>
-          <p>{course.cAttendCredit}</p>
-          <h4>Completion Credit</h4>
-          <p>{course.cFullCredit}</p>
         </div>
 
-        <div className="col-md-6">
-          <h2>Location</h2>
-          <h4>Address</h4>
-          <p>1234 Fake Street</p>
-          <p>Boise, ID, 80088</p>
-          <h4>Building</h4>
-          <p>Holiday Inn</p>
-          <h4>Room Number</h4>
+        <div className="col-md-auto">
+          <h5>Address</h5>
+          <p>{course.sLocation2}</p>
+          <h5>Building</h5>
+          <p>{course.sLocation1}</p>
+          <h5>Room Number</h5>
           <p>{course.cRoom}</p>
+        </div>
+      </div>
+
+      <div className="row mt-4">
+        <div className="col-md-12">
+          <div>
+            <h4>About This Course</h4>
+            <p>{course.cDesc}</p>
+          </div>
+
+          <div className="row">
+            <div className="col-md-4">
+              <h5>Attendance Credit</h5>
+              <p>{course.cAttendCredit}</p>
+            </div>
+            <div className="col-md-4">
+              <h5>Completion Credit</h5>
+              <p>{course.cFullCredit}</p>
+            </div>
+          </div>
+
+          <div className="container mt-4">
+            <div className="row">
+              <div className="col ps-0">
+                {renderWorkDayCard("sunday")}
+              </div>
+              <div className="col">
+                {renderWorkDayCard("monday")}
+              </div>
+              <div className="col">
+                {renderWorkDayCard("tuesday")}
+              </div>
+              <div className="col">
+                {renderWorkDayCard("wednesday")}
+              </div>
+              <div className="col">
+                {renderWorkDayCard("thursday")}
+              </div>
+              <div className="col">
+                {renderWorkDayCard("friday")}
+              </div>
+              <div className="col pe-0">
+                {renderWorkDayCard("saturday")}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
