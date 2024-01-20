@@ -29,7 +29,7 @@ namespace TaxIdaho.Services
 				
 				dbConnection.Open();
 				
-				return dbConnection.Query<SchoolInfo>("SELECT tblSchoolInfo. * FROM tblSchoolInfo order by tblSchoolInfo.SDateSchool").ToList();
+				return dbConnection.Query<SchoolInfo>("SELECT tblSchoolInfo. * FROM tblSchoolInfo order by tblSchoolInfo.SDateSchool").AsEnumerable();
 			}
 		}
 
@@ -44,20 +44,14 @@ namespace TaxIdaho.Services
 			using (IDbConnection dbConnection = new SqlConnection(_connectionString))
 			{
 				string script = @"
-            SELECT [SSchoolType]
-                ,[SDateSchool]
-                ,[SSeq]
-                ,[SCity]
-                ,[SLocation1]
-                ,[SLocation2]
-                ,[SDeadline]
-            FROM [ISTC].[dbo].[tblSchoolInfo]
-            WHERE [SDateSchool] BETWEEN @StartDate AND @EndDate
+            SELECT tblSchoolInfo. *
+            FROM tblSchoolInfo
+            WHERE SDateSchool BETWEEN @StartDate AND @EndDate
         ";
 
 				dbConnection.Open();
-				
-				return dbConnection.Query<SchoolInfo>(script, new { StartDate = startDate, EndDate = endDate }).ToList();
+
+				return dbConnection.Query<SchoolInfo>(script, new { StartDate = startDate, EndDate = endDate }).AsEnumerable();
 			}
 		}
 	}

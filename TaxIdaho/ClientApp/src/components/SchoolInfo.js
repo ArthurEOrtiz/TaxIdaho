@@ -107,30 +107,35 @@ export const SchoolInfo = () => {
     );
   };
 
-  const renderCoursesTable = (courses) => (
-    <table className='table table-striped' aria-labelledby="tabelLabel">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Description</th>
-          <th>Location</th>
-          <th>Address</th>
-          <th>Enrollment Dead Line</th>
-        </tr>
-      </thead>
-      <tbody>
-        {courses.map((course, index) => (
-          <tr key={index}>
-            <TableData td={formatDate(course.sDateSchool)} course={course} />
-            <TableData td={course.sCity} course={course} />
-            <TableData td={course.sLocation1} course={course} />
-            <TableData td={course.sLocation2} course={course} />
-            <TableData td={formatDate(course.sDeadLine)} course={course} />
+  const renderCoursesTable = (courses) => {
+    // Sort courses base on date.
+    const sortedCourses = courses.slice().sort((a, b) => new Date(a.sDateSchool) - new Date(b.sDateSchool));
+
+    return (
+      <table className='table table-striped' aria-labelledby="tabelLabel">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Location</th>
+            <th>Address</th>
+            <th>Enrollment Dead Line</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+        </thead>
+        <tbody>
+          {sortedCourses.map((course, index) => (
+            <tr key={index}>
+              <TableData td={formatDate(course.sDateSchool)} course={course} />
+              <TableData td={course.sCity} course={course} />
+              <TableData td={course.sLocation1} course={course} />
+              <TableData td={course.sLocation2} course={course} />
+              <TableData td={formatDate(course.sDeadLine)} course={course} />
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  };
 
   const contents = startDate && endDate ? (loading ? <p><em>Loading...</em></p> : renderCoursesTable(courses)) : null;
 

@@ -42,7 +42,7 @@ namespace TaxIdaho.Controllers
 		/// Single record of <see cref="SchoolCourse"/>
 		/// </returns>
 		[HttpGet("GetByBlendedKey")]
-		public SchoolCourse GetByBlendedKey(string schoolType, DateTime dateSchool, int cSSeq)
+		public IEnumerable<SchoolCourse> GetByBlendedKey(string schoolType, DateTime dateSchool, int cSSeq)
 		{
 			_logger.LogInformation(0, "GetByBlendedKey({SchoolType}, {DateSchool}, {CSSeq}), Called", schoolType, dateSchool, cSSeq);
 
@@ -53,12 +53,12 @@ namespace TaxIdaho.Controllers
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "GetByBlendedKey({SchoolType}, {DateSchool}, {CSSeq})", schoolType, dateSchool, cSSeq);
-				return null;
+				return Enumerable.Empty<SchoolCourse>();
 			}
 		}
 
 		[HttpGet("GetByBlendedKeyExtendedColumns")]
-		public SchoolCourse GetByBlendedKeyExtendedColumns(string schoolType, DateTime dateSchool, int sSeq)
+		public IEnumerable<SchoolCourse> GetByBlendedKeyExtendedColumns(string schoolType, DateTime dateSchool, int sSeq)
 		{
 			_logger.LogInformation(0, "GetByBlendedKeyExtended({SchoolType}, {DateSchool}, {SSeq}, Called", schoolType, dateSchool, sSeq);
 			try
@@ -68,7 +68,22 @@ namespace TaxIdaho.Controllers
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "GetByBlendedKeyExtended({SchoolType}, {DateSchool}, {SSeq}", schoolType, dateSchool, sSeq);
-				return null;
+				return Enumerable.Empty<SchoolCourse>();
+			}
+		}
+
+		[HttpGet("CountByBlendedKeyExtendedColumns")]
+		public int CountByBlendedKeyExtendedColumns(string schoolType, DateTime dateSchool, int sSeq)
+		{
+			_logger.LogInformation(0, "CountByBlendedKeyExtended({SchoolType}, {DateSchool}, {SSeq}, Called", schoolType, dateSchool, sSeq);
+			try
+			{
+				return _schoolCourseService.CountByBlendedKeyExtendedColumns(schoolType, dateSchool, sSeq);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "CountByBlendedKeyExtended({SchoolType}, {DateSchool}, {SSeq}", schoolType, dateSchool, sSeq);
+				return 0;
 			}
 		}
 	}

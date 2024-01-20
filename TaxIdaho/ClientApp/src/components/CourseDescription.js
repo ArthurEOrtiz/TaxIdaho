@@ -4,41 +4,44 @@ import { useLocation } from 'react-router-dom';
 
 export const CourseDescription = () => {
   const { showBoundary } = useErrorBoundary();
-  const [course, setCourse] = useState([]);
+  const [recordCount, setRecordCount] = useState()
+  const [courses, setCourses] = useState({});
   const [loading, setLoading] = useState(true);
-  const [weekDayObject, setWeekDayObject] = useState({});
+  //const [weekDayObject, setWeekDayObject] = useState({});
+
   const location = useLocation();
 
-  // Fetch the Course Data
+  // Validate the incoming url link as best we can. And get the records from the blended key
   useEffect(() => {
     try {
-      const { schoolType, dateSchool, seq } = validateAndLogCourseDetails(location.search);
+      const { schoolType, dateSchool, seq } = validateCourseDetails(location.search);
       if (schoolType && dateSchool && seq) {
-        fetchData(schoolType, dateSchool, seq);
+        countRecords(schoolType, dateSchool, seq); // this will be userd to render the page in the correct format
+        fetchRecords(schoolType, dateSchool, seq);
       }
     } catch (error) {
       showBoundary(error);
     }
   }, []);
-
+  
   // Set the Week Day Object after the course is set. 
-  useEffect(() => {
-    setWeekDayObject({
-      Sunday: course.cWkDay1,
-      Monday: course.cWkDay2,
-      Tuesday: course.cWkDay3,
-      Wednesday: course.cWkDay4,
-      Thursday: course.cWkDay5,
-      Friday: course.cWkDay6,
-      Saturday: course.cWkDay7
-    });
-  }, [course]);
+  //useEffect(() => {
+  //  setWeekDayObject({
+  //    Sunday: course.cWkDay1,
+  //    Monday: course.cWkDay2,
+  //    Tuesday: course.cWkDay3,
+  //    Wednesday: course.cWkDay4,
+  //    Thursday: course.cWkDay5,
+  //    Friday: course.cWkDay6,
+  //    Saturday: course.cWkDay7
+  //  });
+  //}, [courses]);
 
-  const validateAndLogCourseDetails = (search) => {
+  const validateCourseDetails = (search) => {
     const { schoolType, dateSchool, seq } = extractVariablesFromURL(search);
-    const validationErrors = validateCourseDetails(schoolType, dateSchool, seq);
+    const errors = validationErrors(schoolType, dateSchool, seq);
 
-    if (validationErrors.length > 1) {
+    if (errors.length > 1) {
       throw new Error(`${validationErrors.join(' ')}\nLink values:\nSchoolType: ${schoolType}\n DateSchool: ${dateSchool}\nSeq: ${seq}`);
       return null;
     } else {
@@ -55,22 +58,22 @@ export const CourseDescription = () => {
     };
   };
 
-  const validateCourseDetails = (schoolType, dateSchool, seq) => {
-    const validationErrors = ["There has been an error with the link."];
+  const validationErrors = (schoolType, dateSchool, seq) => {
+    const errors = ["There has been an error with the link."];
 
     if (!(schoolType && schoolType.length === 1)) {
-      validationErrors.push("School type should be a single character.");
+      errors.push("School type should be a single character.");
     }
 
     if (!(dateSchool && isValidDate(dateSchool))) {
-      validationErrors.push("Date school should be a valid date in the format 'YYYY-MM-DD'.");
+      errors.push("Date school should be a valid date in the format 'YYYY-MM-DD'.");
     }
 
     if (!(seq && /^\d+$/.test(seq))) {
-      validationErrors.push("Seq should be a sequence of digits.");
+      errors.push("Seq should be a sequence of digits.");
     }
 
-    return validationErrors;
+    return errors;
   };
 
   const isValidDate = (dateString) => {
@@ -78,20 +81,37 @@ export const CourseDescription = () => {
     return regex.test(dateString);
   };
 
-  const fetchData = async (schoolType, dateSchool, seq) => {
+  const fetchRecords = async (schoolType, dateSchool, seq) => {
     try {
       const response = await fetch(`schoolcourse/GetByBlendedKeyExtendedColumns?schoolType=${schoolType}&dateSchool=${dateSchool}&sSeq=${seq}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch course record: ${response.status} ${response.message}`);
       }
       const data = await response.json();
-      console.log('Selected Course: ', data);
-      setCourse(data)
+      console.log('Selected Courses: ', data);
+      setCourses(data)
       setLoading(false);
     } catch (error) {
       showBoundary(error);
     }
   }
+
+  const countRecords = async (schoolType, dateSchool, seq) => {
+    try {
+      const response = await fetch(`schoolcourse/CountByBlendedKeyExtendedColumns?schoolType=${schoolType}&dateSchool=${dateSchool}&sSeq=${seq}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to count records: ${response.status} ${response.message}`);
+      };
+
+      const recordCount = await response.json();
+      console.log(recordCount);
+      //console.log(blendedKey);
+      setRecordCount(recordCount);
+    } catch (error) {
+      showBoundary(error);
+    }
+  };
 
   // Helper function to format dates
   const formatDate = (dateString) => {
@@ -128,7 +148,7 @@ export const CourseDescription = () => {
     );
   }
 
-  const renderPage = (course) => (
+  const renderSingleCourse= (course) => (
     <div className="container">
       <h1 className="mb-4">{course.cName}</h1>
 
@@ -199,8 +219,22 @@ export const CourseDescription = () => {
       </div>
     </div>
   );
+  
+  const renderManyCourses = (courses) => {
+    console.log(`Many Courses: ${courses}`);
+  } 
 
-  const contents = loading ? <p><em>Loading Course . . . </em></p> : renderPage(course);
+  const renderPage = (courses) => {
+    if (recordCount === 1) {
+      const course = courses[0];
+     // console.log(` Single Course: ${course}`);
+      renderSingleCourse(course);
+    } else {
+      renderManyCourses(courses);
+    }
+  }
+
+  const contents = loading ? <p><em>Loading Course . . . </em></p> : renderPage(courses);
 
   return contents;
 };
