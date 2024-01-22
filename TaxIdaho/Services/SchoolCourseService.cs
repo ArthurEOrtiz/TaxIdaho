@@ -29,7 +29,7 @@ namespace TaxIdaho.Services
 			}
 		}
 
-		public SchoolCourse GetByBlendedKey(string schoolType, DateTime dateSchool, int cSSeq)
+		public IEnumerable<SchoolCourse> GetByBlendedKey(string schoolType, DateTime dateSchool, int cSSeq)
 		{
 			using (IDbConnection dbConnection = new SqlConnection(_connectionString))
 			{
@@ -42,7 +42,7 @@ namespace TaxIdaho.Services
 						AND cSSeq = @CSSeq
 				";
 
-				return dbConnection.Query<SchoolCourse>(script, new { SchoolType = schoolType, DateSchool = dateSchool, CSSeq = cSSeq }).Single();
+				return dbConnection.Query<SchoolCourse>(script, new { SchoolType = schoolType, DateSchool = dateSchool, CSSeq = cSSeq });
 			}
 		}
 
@@ -53,7 +53,7 @@ namespace TaxIdaho.Services
 		/// <param name="dateSchool"></param>
 		/// <param name="cSSeq"></param>
 		/// <returns></returns>
-		public SchoolCourse GetByBlendedKeyExtended(string schoolType, DateTime dateSchool, int cSSeq)
+		public IEnumerable<SchoolCourse> GetByBlendedKeyExtendedColumns(string schoolType, DateTime dateSchool, int sSeq)
 		{
 			using (IDbConnection dbConnection = new SqlConnection(_connectionString))
 			{
@@ -73,12 +73,40 @@ namespace TaxIdaho.Services
 					WHERE
 							st.SSchoolType = @SchoolType
 							AND st.SDateSchool = @DateSchool
-							AND st.SSeq = @CSSeq;
+							AND st.SSeq = @SSeq;
 				";
 
-				return dbConnection.Query<SchoolCourse>(script, new { SchoolType = schoolType, DateSchool = dateSchool, CSSeq = cSSeq }).Single();
+				return dbConnection.Query<SchoolCourse>(script, new { SchoolType = schoolType, DateSchool = dateSchool, SSeq = sSeq }).AsEnumerable();
 			}
 		}
-		// START HERE tomorrow figure out if this works.
+
+		public int CountByBlendedKeyExtendedColumns(string schoolType, DateTime dateSchool, int sSeq)
+		{
+			using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+			{
+				dbConnection.Open();
+				string script = @"
+					SELECT COUNT(*) AS RecordCount
+					FROM tblSchoolInfo st
+					RIGHT OUTER JOIN tblSchoolCourses ds
+							ON ds.cDateSchool = st.SDateSchool
+							AND ds.cSchoolType = st.SSchoolType
+							AND ds.cSSeq = st.SSeq
+					WHERE
+							st.SSchoolType = @SchoolType
+							AND st.SDateSchool = @DateSchool
+							AND st.SSeq = @SSeq;
+				";
+
+				var parameters = new
+				{
+					SchoolType = schoolType,
+					DateSchool = dateSchool,
+					SSeq = sSeq
+				};
+
+				return dbConnection.QueryFirstOrDefault<int>(script, parameters);
+			}
+		}
 	}
 }

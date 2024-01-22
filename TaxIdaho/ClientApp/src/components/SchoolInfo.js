@@ -47,29 +47,28 @@ export const SchoolInfo = () => {
       }
 
       const data = await response.json();
-      console.log('Received data:', data);
+      //console.log('Received data:', data);
       setCourses(data);
       setLoading(false);
 
     } catch (error) {
-      //console.error('Error:', error);
       showBoundary(error);
     }
   };
 
   const handleStartDateChange = (event) => {
-    const selectedStartDate = event.target.value;
     // The user can only set the startDate to something before the endDate
     // or to anything if the endDate is not set. 
+    const selectedStartDate = event.target.value;
     if (!endDate || new Date(endDate) > new Date(selectedStartDate)) {
       setStartDate(selectedStartDate);
     }
   };
 
   const handleEndDateChange = (event) => {
-    const selectedEndDate = event.target.value;
     // The user can only set the endDate to to something less than the start date
-    // or when the start date isn't set yet. 
+    // or when the start date isn't set yet.
+    const selectedEndDate = event.target.value;
     if (!startDate || new Date(selectedEndDate) >= new Date(startDate)) {
       setEndDate(selectedEndDate);
     }
@@ -107,30 +106,35 @@ export const SchoolInfo = () => {
     );
   };
 
-  const renderCoursesTable = (courses) => (
-    <table className='table table-striped' aria-labelledby="tabelLabel">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Description</th>
-          <th>Location</th>
-          <th>Address</th>
-          <th>Enrollment Dead Line</th>
-        </tr>
-      </thead>
-      <tbody>
-        {courses.map((course, index) => (
-          <tr key={index}>
-            <TableData td={formatDate(course.sDateSchool)} course={course} />
-            <TableData td={course.sCity} course={course} />
-            <TableData td={course.sLocation1} course={course} />
-            <TableData td={course.sLocation2} course={course} />
-            <TableData td={formatDate(course.sDeadLine)} course={course} />
+  const renderCoursesTable = (courses) => {
+    // Sort courses base on date.
+    const sortedCourses = courses.slice().sort((a, b) => new Date(a.sDateSchool) - new Date(b.sDateSchool));
+
+    return (
+      <table className='table table-striped' aria-labelledby="tabelLabel">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Location</th>
+            <th>Address</th>
+            <th>Enrollment Dead Line</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+        </thead>
+        <tbody>
+          {sortedCourses.map((course, index) => (
+            <tr key={index}>
+              <TableData td={formatDate(course.sDateSchool)} course={course} />
+              <TableData td={course.sCity} course={course} />
+              <TableData td={course.sLocation1} course={course} />
+              <TableData td={course.sLocation2} course={course} />
+              <TableData td={formatDate(course.sDeadLine)} course={course} />
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  };
 
   const contents = startDate && endDate ? (loading ? <p><em>Loading...</em></p> : renderCoursesTable(courses)) : null;
 
