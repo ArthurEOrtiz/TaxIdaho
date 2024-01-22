@@ -7,7 +7,6 @@ export const CourseDescription = () => {
   const [recordCount, setRecordCount] = useState()
   const [courses, setCourses] = useState({});
   const [loading, setLoading] = useState(true);
-  //const [weekDayObject, setWeekDayObject] = useState({});
 
   const location = useLocation();
 
@@ -24,18 +23,18 @@ export const CourseDescription = () => {
     }
   }, []);
   
-  // Set the Week Day Object after the course is set. 
-  //useEffect(() => {
-  //  setWeekDayObject({
-  //    Sunday: course.cWkDay1,
-  //    Monday: course.cWkDay2,
-  //    Tuesday: course.cWkDay3,
-  //    Wednesday: course.cWkDay4,
-  //    Thursday: course.cWkDay5,
-  //    Friday: course.cWkDay6,
-  //    Saturday: course.cWkDay7
-  //  });
-  //}, [courses]);
+  // Right now this is only set when there is one course to view. 
+  const renderWeekDayObject = (course) => {
+    return {
+      Sunday: course.cWkDay1,
+      Monday: course.cWkDay2,
+      Tuesday: course.cWkDay3,
+      Wednesday: course.cWkDay4,
+      Thursday: course.cWkDay5,
+      Friday: course.cWkDay6,
+      Saturday: course.cWkDay7
+    };
+  };
 
   const validateCourseDetails = (search) => {
     const { schoolType, dateSchool, seq } = extractVariablesFromURL(search);
@@ -120,6 +119,7 @@ export const CourseDescription = () => {
   };
 
   const renderWorkDayText = (cWkDay) => {
+
     const workDay = (cWkDay ?? "").toLowerCase();
 
     switch (workDay) {
@@ -136,10 +136,29 @@ export const CourseDescription = () => {
     }
   };
 
-  const renderWorkDayCard = (dayOfTheWeek) => {
+  const formatCardClassName = (cWkDay) => {
+
+    const workDay = (cWkDay ?? "").toLowerCase();
+
+    switch (workDay) {
+      case "a":
+      case "b":
+        return "card ratio ratio-1x1 text-white bg-warning";
+      case "f":
+        return "card ratio ratio-1x1 text-white bg-success";
+      case "":
+        return "card ratio ratio-1x1 bg-light"
+      default:
+        throw new Error(`${cWkDay}, is not a valid parameter for formatCardClassName()`);
+    }
+  }
+
+  const renderWorkDayCard = (dayOfTheWeek, weekDayObject) => {
+
     const formattedDay = dayOfTheWeek.charAt(0).toUpperCase() + dayOfTheWeek.slice(1).toLowerCase();
+
     return (
-      <div className="card ratio ratio-1x1">
+      <div className={formatCardClassName(weekDayObject[formattedDay])}>
         <div className="card-body">
           <h6 className="card-title text-center">{formattedDay}</h6>
           {renderWorkDayText(weekDayObject[formattedDay])}
@@ -148,87 +167,94 @@ export const CourseDescription = () => {
     );
   }
 
-  const renderSingleCourse= (course) => (
-    <div className="container">
-      <h1 className="mb-4">{course.cName}</h1>
+  const renderSingleCourse = (course) => {
+    const weekDayObject = renderWeekDayObject(course);
 
-      <div className="row">
-        <div className="col-md-4">
-          <h5>Start Date</h5>
-          <p>{formatDate(course.cDateSchool)}</p>
-          <h5>Enrollment Deadline</h5>
-          <p>{formatDate(course.sDeadLine)}</p>
-          <h5>Class Time</h5>
-          <p>{course.cTime}</p>
-        </div>
+    return (
+      <div className="container">
+        <h1 className="mb-4">{course.cName}</h1>
 
-        <div className="col-md-auto">
-          <h5>Address</h5>
-          <p>{course.sLocation2}</p>
-          <h5>Building</h5>
-          <p>{course.sLocation1}</p>
-          <h5>Room Number</h5>
-          <p>{course.cRoom}</p>
-        </div>
-      </div>
-
-      <div className="row mt-4">
-        <div className="col-md-12">
-          <div>
-            <h4>About This Course</h4>
-            <p>{course.cDesc}</p>
+        <div className="row">
+          <div className="col-md-4">
+            <h5>Start Date</h5>
+            <p>{formatDate(course.cDateSchool)}</p>
+            <h5>Enrollment Deadline</h5>
+            <p>{formatDate(course.sDeadLine)}</p>
+            <h5>Class Time</h5>
+            <p>{course.cTime}</p>
           </div>
 
-          <div className="row">
-            <div className="col-md-4">
-              <h5>Attendance Credit</h5>
-              <p>{course.cAttendCredit}</p>
-            </div>
-            <div className="col-md-4">
-              <h5>Completion Credit</h5>
-              <p>{course.cFullCredit}</p>
-            </div>
+          <div className="col-md-auto">
+            <h5>Address</h5>
+            <p>{course.sLocation2}</p>
+            <h5>Building</h5>
+            <p>{course.sLocation1}</p>
+            <h5>Room Number</h5>
+            <p>{course.cRoom}</p>
           </div>
+        </div>
 
-          <div className="container mt-4">
+        <div className="row mt-4">
+          <div className="col-md-12">
+            <div>
+              <h4>About This Course</h4>
+              <p>{course.cDesc}</p>
+            </div>
+
             <div className="row">
-              <div className="col ps-0">
-                {renderWorkDayCard("sunday")}
+              <div className="col-md-4">
+                <h5>Attendance Credit</h5>
+                <p>{course.cAttendCredit}</p>
               </div>
-              <div className="col">
-                {renderWorkDayCard("monday")}
-              </div>
-              <div className="col">
-                {renderWorkDayCard("tuesday")}
-              </div>
-              <div className="col">
-                {renderWorkDayCard("wednesday")}
-              </div>
-              <div className="col">
-                {renderWorkDayCard("thursday")}
-              </div>
-              <div className="col">
-                {renderWorkDayCard("friday")}
-              </div>
-              <div className="col pe-0">
-                {renderWorkDayCard("saturday")}
+              <div className="col-md-4">
+                <h5>Completion Credit</h5>
+                <p>{course.cFullCredit}</p>
               </div>
             </div>
+
+            <div className="container mt-4">
+              <div className="row">
+                <div className="col ps-0">
+                  {renderWorkDayCard("sunday", weekDayObject)}
+                </div>
+                <div className="col">
+                  {renderWorkDayCard("monday", weekDayObject)}
+                </div>
+                <div className="col">
+                  {renderWorkDayCard("tuesday", weekDayObject)}
+                </div>
+                <div className="col">
+                  {renderWorkDayCard("wednesday",weekDayObject)}
+                </div>
+                <div className="col">
+                  {renderWorkDayCard("thursday", weekDayObject)}
+                </div>
+                <div className="col">
+                  {renderWorkDayCard("friday", weekDayObject)}
+                </div>
+                <div className="col pe-0">
+                  {renderWorkDayCard("saturday", weekDayObject)}
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+    
+  }
   
   const renderManyCourses = (courses) => {
     console.log(`Many Courses: ${courses}`);
+    return <div>MANY COURSES!</div>
   } 
 
   const renderPage = (courses) => {
     if (recordCount === 1) {
       const course = courses[0];
-     // console.log(` Single Course: ${course}`);
-      renderSingleCourse(course);
+      return renderSingleCourse(course);
+      //console.log(course)
     } else {
       renderManyCourses(courses);
     }

@@ -47,29 +47,28 @@ export const SchoolInfo = () => {
       }
 
       const data = await response.json();
-      console.log('Received data:', data);
+      //console.log('Received data:', data);
       setCourses(data);
       setLoading(false);
 
     } catch (error) {
-      //console.error('Error:', error);
       showBoundary(error);
     }
   };
 
   const handleStartDateChange = (event) => {
-    const selectedStartDate = event.target.value;
     // The user can only set the startDate to something before the endDate
     // or to anything if the endDate is not set. 
+    const selectedStartDate = event.target.value;
     if (!endDate || new Date(endDate) > new Date(selectedStartDate)) {
       setStartDate(selectedStartDate);
     }
   };
 
   const handleEndDateChange = (event) => {
-    const selectedEndDate = event.target.value;
     // The user can only set the endDate to to something less than the start date
-    // or when the start date isn't set yet. 
+    // or when the start date isn't set yet.
+    const selectedEndDate = event.target.value;
     if (!startDate || new Date(selectedEndDate) >= new Date(startDate)) {
       setEndDate(selectedEndDate);
     }
